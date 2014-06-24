@@ -1,13 +1,11 @@
 #!/usr/bin/perl -w
 use strict;
-use WWW::Mechanize::Timed;
+use Hammer;
 
-my $mech = WWW::Mechanize::Timed->new;
+my $hammer = Hammer->new(
+	hostname => 'funnycow.com',
+	thread_count => 10
+);
 
-$mech->get('http://rotogrinders.com/');
+$hammer->start;
 
-print $mech->title . "\n";
-
-print $mech->client_response_server_time . "\n";
-print $mech->client_total_time . "\n";
-print $mech->client_elapsed_time . "\n";

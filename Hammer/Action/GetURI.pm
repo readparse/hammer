@@ -9,7 +9,8 @@ sub run {
 	my $mech = $this->agent;
 	print "Getting " . $this->name . "\n";
 	$mech->get($this->fully_qualified);
-	print "Got \"" . $mech->title . "\"\n";
+	my $title = $mech->title || 'Untitled';
+	return $mech->client_elapsed_time;
 }
 
 sub fully_qualified {

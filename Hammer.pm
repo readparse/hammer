@@ -1,7 +1,7 @@
 package Hammer;
 use Moose;
 use Data::Dumper;
-use WWW::Mechanize;
+use WWW::Mechanize::Timed;
 use threads;
 
 has hostname => (is => 'rw');
@@ -32,12 +32,13 @@ sub start_thread {
 
 sub run_actions {
 	my $this = shift;
-	my $mech = WWW::Mechanize->new;
+	my $mech = WWW::Mechanize::Timed->new;
 	for my $action($this->actions) {
 		$action->hostname($this->hostname);
 		$action->protocol($this->protocol);
 		$action->agent($mech);
-		$action->run;
+		my $elapsed = $action->run;
+		print "$elapsed\n";
 	}
 }
 

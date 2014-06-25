@@ -18,11 +18,15 @@ if ($hostname && $thread_count) {
 		thread_count => $thread_count,
 		actions => [
 			Hammer::Action::GetURI->new( name => 'Home Page', uri => '/'),
-			#Hammer::Action::GetURI->new( name => 'Lineups', uri => '/lineups'),
+			Hammer::Action::GetURI->new( name => 'Lineups', uri => '/lineups'),
 		]
 	);
-	
 	$hammer->start;
+
+	for my $action($hammer->actions) {
+		#print $action->average . "\n";
+	}
+
 } else {
 	usage();
 }

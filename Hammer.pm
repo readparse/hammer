@@ -2,6 +2,7 @@ package Hammer;
 use Moose;
 use Data::Dumper;
 use WWW::Mechanize::Timed;
+use Hammer::Memcached;
 use threads;
 
 has hostname => (is => 'rw');
@@ -11,11 +12,17 @@ has threads => (is => 'rw', isa => 'ArrayRef', auto_deref => 1, default => sub {
 has actions => (is => 'rw', isa => 'ArrayRef[Hammer::Action]', auto_deref => 1, default => sub {[]});
 has timestamp => (is => 'rw', lazy_build => 1);
 has flush => (is => 'rw', isa => 'Bool', default => sub { 0 } );
+has cache => (is => 'rw', isa => 'Hammer::Memcached', lazy_build => 1);
+
+sub _build_cache { return Hammer::Memcached->new }
 
 sub _build_timestamp { time };
 
 sub start {
 	my $this = shift;
+	if ($this->flush) {
+		$this->cache->delete_hash;
+	}
 	for my $i (1..$this->thread_count) {
 		push(@{$this->threads}, threads->create('start_thread', $this));		
 	}	

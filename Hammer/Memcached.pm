@@ -1,6 +1,7 @@
 package Hammer::Memcached;
 use Moose;
 use Cache::Memcached;
+use Data::Dumper;
 
 has servers => (is => 'rw', isa => 'ArrayRef', default => sub { [ '127.0.0.1:11211' ] }  );
 has cache => (is => 'rw', isa => 'Cache::Memcached', lazy_build => 1);
@@ -16,6 +17,11 @@ sub get_hash {
 sub set_hash { 
 	my ($this, $value) = @_;
 	$this->cache->set($this->key, $value);
+}
+
+sub delete_hash {
+	my $this = shift;
+	$this->cache->delete($this->key);
 }
 
 1;

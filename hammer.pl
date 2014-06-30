@@ -7,7 +7,6 @@ use Getopt::Long;
 use Data::Dumper;
 use Storable;
 
-
 my ($hostname, $thread_count, $flush, $maxdepth, $uri) = (undef, undef, 0, 999, undef);
 
 GetOptions(

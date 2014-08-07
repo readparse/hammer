@@ -7,7 +7,7 @@ use Getopt::Long;
 use Data::Dumper;
 use Storable;
 
-my ($hostname, $thread_count, $repeat, $flush, $maxdepth, $uri) = (undef, undef, undef, 0, 999, undef);
+my ($hostname, $thread_count, $repeat, $flush, $maxdepth, $uri) = (undef, undef, 1, 0, 999, undef);
 
 GetOptions(
 	"hostname=s" => \$hostname,

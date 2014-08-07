@@ -26,7 +26,7 @@ sub start {
 		$this->cache->delete_hash;
 	}
 	for my $r (1..$this->repeat) {
-		print "Round 1\n";
+		print "Round $r of " . $this->repeat . "\n";
 		for my $i (1..$this->thread_count) {
 			push(@{$this->threads}, threads->create('start_thread', $this));		
 		}	

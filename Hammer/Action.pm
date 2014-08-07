@@ -7,6 +7,7 @@ use Data::Dumper;
 has name => (is => 'rw');
 has hostname => (is => 'rw');
 has protocol => (is => 'rw');
+has uri => ( is => 'rw' );
 has agent => (is => 'rw', isa => 'WWW::Mechanize::Timed');
 has cache => (is => 'rw', isa => 'Hammer::Memcached', lazy_build => 1);
 has timestamp => (is => 'rw');
@@ -19,6 +20,11 @@ sub report_time {
 	$hash->{$this->timestamp}->{$this->name} = [] unless $hash->{$this->timestamp}->{$this->name};
 	push(@{$hash->{$this->timestamp}->{$this->name}}, $time);
 	$this->cache->set_hash($hash);
+}
+
+sub fully_qualified {
+	my $this = shift;
+	return sprintf("%s://%s%s", $this->protocol, $this->hostname, $this->uri);
 }
 
 1;

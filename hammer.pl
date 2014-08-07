@@ -8,7 +8,7 @@ use Getopt::Long;
 use Data::Dumper;
 use Storable;
 
-my ($hostname, $thread_count, $repeat, $flush, $maxdepth, $uri) = (undef, undef, 1, 0, 999, undef);
+my ($hostname, $thread_count, $repeat, $flush, $maxdepth, $uri, $sleep) = (undef, undef, 1, 0, 999, undef, undef);
 
 GetOptions(
 	"hostname=s" => \$hostname,
@@ -17,6 +17,7 @@ GetOptions(
 	"flush" => \$flush,
 	"maxdepth=i" => \$maxdepth,
 	"uri" => \$uri,
+	"sleep=i" => \$sleep,
 );
 
 if ($hostname && $thread_count) {
@@ -31,6 +32,7 @@ if ($hostname && $thread_count) {
 			Hammer::Action::GetURI->new( name => 'Lineups', uri => '/lineups'),
 			Hammer::Action::GetURI->new( name => 'GrindersLive', uri => '/live'),
 			Hammer::Action::GetURI->new( name => 'MLB Daily Batter Hub', uri => '/pages/Hot_Streak_Hitters-56970'),
+			Hammer::Action::GetURI->new( name => 'Main Forum', uri => '/threads/category/main'),
 			Hammer::Action::SubmitForm->new( 
 				name => 'Submit Login Form', 
 				uri => '/sign-in', 
@@ -49,8 +51,10 @@ if ($hostname && $thread_count) {
 					text => lipsum()
 				}
 			),
+			Hammer::Action::GetURI->new( name => 'Main Forum', uri => '/threads/category/main'),
 		]
 	);
+	$hammer->sleep($sleep) if $sleep;
 
 	if ($uri) {
 		$hammer->actions( Hammer::Action::GetURI->new(  name => 'Custom URI', uri => $uri  ) );

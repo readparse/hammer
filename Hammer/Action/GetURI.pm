@@ -2,8 +2,6 @@ package Hammer::Action::GetURI;
 use Moose;
 extends 'Hammer::Action';
 
-has uri => ( is => 'rw' );
-
 sub run {
 	my $this = shift;
 	my $mech = $this->agent;

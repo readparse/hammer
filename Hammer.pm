@@ -8,6 +8,7 @@ use threads;
 has hostname => (is => 'rw');
 has protocol => (is => 'rw');
 has thread_count => (is => 'rw', default => sub { 10 } );
+has sleep => (is => 'rw', default => sub { 0 } );
 has repeat => (is => 'rw', default => sub { 1 } );
 has threads => (is => 'rw', isa => 'ArrayRef', auto_deref => 1, default => sub {[]});
 has actions => (is => 'rw', isa => 'ArrayRef[Hammer::Action]', auto_deref => 1, default => sub {[]});
@@ -55,11 +56,16 @@ sub run_actions {
 	my $mech = WWW::Mechanize::Timed->new;
 	my @times;
 	for my $action($this->actions) {
+		print "Running action \"" . $action->name . "\"\n";
 		$action->agent($mech);
 		$this->pass_along($action);
 		my $elapsed = $action->run;
 		push(@times, { action => $action->name, time => $elapsed, uri => $action->uri });
 		$action->report_time($elapsed);
+		if ($this->sleep) {
+			#print "Sleeping for " . $this->sleep . " second(s)\n";
+			sleep $this->sleep;
+		}
 	}
 	return \@times;
 }

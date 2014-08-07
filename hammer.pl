@@ -7,11 +7,12 @@ use Getopt::Long;
 use Data::Dumper;
 use Storable;
 
-my ($hostname, $thread_count, $flush, $maxdepth, $uri) = (undef, undef, 0, 999, undef);
+my ($hostname, $thread_count, $repeat, $flush, $maxdepth, $uri) = (undef, undef, undef, 0, 999, undef);
 
 GetOptions(
 	"hostname=s" => \$hostname,
 	"thread_count=i" => \$thread_count,
+	"repeat=i" => \$repeat,
 	"flush" => \$flush,
 	"maxdepth=i" => \$maxdepth,
 	"uri" => \$uri,
@@ -23,6 +24,7 @@ if ($hostname && $thread_count) {
 		hostname => $hostname,
 		thread_count => $thread_count,
 		flush => $flush,
+		repeat => $repeat,
 		actions => [
 			Hammer::Action::GetURI->new( name => 'Home Page', uri => '/'),
 			Hammer::Action::GetURI->new( name => 'Lineups', uri => '/lineups'),

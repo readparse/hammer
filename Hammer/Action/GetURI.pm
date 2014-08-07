@@ -7,10 +7,11 @@ has uri => ( is => 'rw' );
 sub run {
 	my $this = shift;
 	my $mech = $this->agent;
-	print "Getting " . $this->name . "\n";
 	$mech->get($this->fully_qualified);
 	my $title = $mech->title || 'Untitled';
-	return $mech->client_elapsed_time;
+	#return $mech->client_elapsed_time;
+	#return $mech->client_total_time;
+	return $mech->client_total_time;
 }
 
 sub fully_qualified {

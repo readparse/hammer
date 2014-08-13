@@ -51,7 +51,9 @@ if ($hostname && $thread_count) {
 					text => lipsum()
 				}
 			),
-			Hammer::Action::GetURI->new( name => 'Main Forum', uri => '/threads/category/main'),
+			#Hammer::Action::GetURI->new( name => 'Main Forum', uri => '/threads/category/main'),
+			Hammer::Action::GetURI->new( name => 'Main Forum, page 2', uri => '/threads/category/main?page=2'),
+			Hammer::Action::GetURI->new( name => 'Main Forum, page 3', uri => '/threads/category/main?page=3'),
 		]
 	);
 	$hammer->sleep($sleep) if $sleep;

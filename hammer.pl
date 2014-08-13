@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
-use Hammer;
+use Hammer; 
 use Hammer::Action::GetURI;
 use Hammer::Action::SubmitForm;
 use Hammer::Stats;

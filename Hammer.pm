@@ -16,6 +16,9 @@ has timestamp => (is => 'rw', lazy_build => 1);
 has flush => (is => 'rw', isa => 'Bool', default => sub { 0 } );
 has cache => (is => 'rw', isa => 'Hammer::Memcached', lazy_build => 1);
 has results => (is => 'rw', isa => 'ArrayRef', auto_deref => 1, default => sub {[]} );
+has verbose => (is => 'rw', isa => 'Bool', default => sub { 0 });
+has draftcity => (is => 'rw', isa => 'Bool', default => sub { 0 });
+has series => (is => 'rw', isa => 'Num');
 
 sub _build_cache { return Hammer::Memcached->new }
 
@@ -27,9 +30,9 @@ sub start {
 		$this->cache->delete_hash;
 	}
 	for my $r (1..$this->repeat) {
-		print "Round $r of " . $this->repeat . "\n";
+		warn "Round $r of " . $this->repeat . "\n";
 		for my $i (1..$this->thread_count) {
-			push(@{$this->threads}, threads->create('start_thread', $this));		
+			push(@{$this->threads}, threads->create('start_thread', $this, "$r$i"));		
 		}	
 		$this->join;
 		$this->threads([]);
@@ -47,19 +50,24 @@ sub join {
 }
 
 sub start_thread {
-	my $this = shift;
-	$this->run_actions;
+	my ($this, $increment) = @_;
+	my $username = 'hammer_' . ($this->series + $increment);
+	my $email = "$username\@rotogrinders.com";
+	$this->run_actions( { username => $username, email => $email } );
 }
 
 sub run_actions {
 	my $this = shift;
+	my $params = shift;
 	my $mech = WWW::Mechanize::Timed->new;
+	$mech->timeout(10);
+	$mech->credentials( 'draft', 'city') if $this->draftcity;
 	my @times;
 	for my $action($this->actions) {
-		print "Running action \"" . $action->name . "\"\n";
+		print "Running action \"" . $action->name . "\"\n" if $this->verbose;
 		$action->agent($mech);
 		$this->pass_along($action);
-		my $elapsed = $action->run;
+		my $elapsed = $action->run($params);
 		push(@times, { action => $action->name, time => $elapsed, uri => $action->uri });
 		$action->report_time($elapsed);
 		if ($this->sleep) {
@@ -80,7 +88,7 @@ sub pass_along {
 sub wiki_report {
 	my $this = shift;
 	my $actions = $this->make_actions_hash;
-	for my $action(keys(%{$actions})) {
+	for my $action(sort keys(%{$actions})) {
 		my $times = $actions->{$action};
 		my $stats = Hammer::Stats->new( set => $times, thread_count => $this->thread_count, precision => 6, repeat => $this->repeat );
 		print "h3. $action:\n";
